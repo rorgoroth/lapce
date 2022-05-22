@@ -4,3 +4,7 @@
 lib/
 target/
 core/languages/
+
+.github/workflows/ci.yml
+.github/workflows/pr.yml
+.github/workflows/release.yml

@@ -1,0 +1,40 @@
+name: build
+
+on:
+  push:
+
+jobs:
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Sources
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Update Rust
+      run: rustup update
+
+    - name: Build Lapce
+      run: cargo build --release
+
+    - name: Create Latest Release
+      id: create_release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        automatic_release_tag: "latest"
+        prerelease: false
+        title: Latest Build
+
+    - name: Upload Binary
+      id: upload_release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./target/release/lapce.exe
+        asset_name: lapce.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
